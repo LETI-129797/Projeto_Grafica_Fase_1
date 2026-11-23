@@ -523,6 +523,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293e85595a9057b4fb9e047b5f1aaf2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LSystemEngine
+  prefabEstrela: {fileID: 321889964611246938, guid: d44ffa23b384a324e98fbbf11eeca280, type: 3}
+  prefabNuvem: {fileID: 2899145356623764026, guid: 386a1438b0c7c754099a3cc88b4ab2b8, type: 3}
+  prefabPlaneta: {fileID: 4487033686229856566, guid: 77aaf26d58cc66d41846938619abaed2, type: 3}
+  prefabLua: {fileID: 0}
+  prefabProtoEstrela: {fileID: 0}
+  prefabProtoPlaneta: {fileID: 0}
+  prefabPlanetesimal: {fileID: 0}
+  prefabDiscoPlanetario: {fileID: 0}
+  prefabDiscoProtoPlanetario: {fileID: 0}
 --- !u!1 &433832314 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 250817127263269076, guid: 77aaf26d58cc66d41846938619abaed2, type: 3}

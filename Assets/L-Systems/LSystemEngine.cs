@@ -4,6 +4,24 @@ using System.Collections.Generic;
 
 public class LSystemEngine : MonoBehaviour
 {
+    public GameObject prefabEstrela;
+
+    public GameObject prefabNuvem;
+    
+    public GameObject prefabPlaneta;
+
+    public GameObject prefabLua;
+    
+    public GameObject prefabProtoEstrela;
+
+    public GameObject prefabProtoPlaneta;
+    
+    public GameObject prefabPlanetesimal;
+
+    public GameObject prefabDiscoPlanetario;
+
+    public GameObject prefabDiscoProtoPlanetario;
+
     private List<Symbol> currentWord = new List<Symbol>();
     private List<List<Symbol>> history = new List<List<Symbol>>();
     private List<Rule> rules = new List<Rule>();
@@ -16,29 +34,9 @@ public class LSystemEngine : MonoBehaviour
 
     void LoadRules()
     {
-        // P1: n -> p d3
-        rules.Add(new Rule('n', CreateSymbolList("p d3")));
-        
-        // P2: p -> e
-        rules.Add(new Rule('p', CreateSymbolList("e")));
-
-        // P3: d3 -> D d2
-        rules.Add(new Rule('d', CreateSymbolList("D d2"))); // 'd' representa disco parametrizado
-        
-        // P4: d2 -> D d1
-        rules.Add(new Rule('d', CreateSymbolList("D d1")));
-
-        // P5: d1 -> D
-        rules.Add(new Rule('d', CreateSymbolList("D")));
-
-        // P6: D -> m
-        rules.Add(new Rule('D', CreateSymbolList("m")));
-
-        // P7: m -> N
-        rules.Add(new Rule('m', CreateSymbolList("N")));
-
-        // P8: N -> P[1][1]
-        rules.Add(new Rule('N', CreateSymbolList("P [ 1 ] [ 1 ]")));
+        Rule ruleLoader = new Rule(' ', "", new List<Symbol>());
+        ruleLoader.LoadRulesFromFile();
+        rules = ruleLoader.rules;
     }
 
     public void SetAxiom(char axiomChar)
@@ -74,15 +72,41 @@ public class LSystemEngine : MonoBehaviour
         }
 
         // Verifica se a evolução terminou
+        EndEvolution(nextWord);
+
+        currentWord = nextWord;
+        SaveHistory();
+        PrintCurrentWord();
+    }
+
+    public void StepBackward()
+    {
+        if(history.Count > 1)
+        {
+            history.RemoveAt(history.Count - 1);
+
+            List<Symbol> previousWord = history[history.Count - 1];
+            currentWord.Clear();
+
+            foreach (Symbol s in previousWord)
+            {
+                currentWord.Add(s.Clone());
+            }   
+            PrintCurrentWord();
+        }
+        else
+        {
+            Debug.Log("Não é possível voltar mais passos. A palavra atual é a inicial.");
+        }
+    }
+
+    private void EndEvolution(List<Symbol> nextWord)
+    {
         if (IsWordEqual(currentWord, nextWord))
         {
             Debug.Log("A evolução do sistema terminou!");
             return;
         }
-
-        currentWord = nextWord;
-        SaveHistory();
-        PrintCurrentWord();
     }
 
     private Rule FindMatchingRule(Symbol sym)
@@ -90,10 +114,42 @@ public class LSystemEngine : MonoBehaviour
         foreach (Rule r in rules)
         {
             if (r.predecessor == sym.character)
-                return r;
+            {
+                if(EvaluateCondition(r.condition, sym))
+                {
+                    return r;
+                }
+            }
         }
         return null; // Aplica regra de identidade se não encontrar
     }
+
+    private bool EvaluateCondition(string condition, Symbol sym)
+    {
+        if(string.IsNullOrEmpty(condition)) return true; // Se não houver condição, a regra é aplicável
+
+        condition = condition.Trim();
+
+        if (condition.Contains("=="))
+        {
+            string[] parts = condition.Split(new string[] { "==" }, System.StringSplitOptions.None);
+            
+            if(parts.Length == 2)
+            {
+                string paramName = parts[0].Trim();
+
+                if(float.TryParse(parts[1].Trim(), out float value))
+                {
+                    if(sym.parameters.ContainsKey(paramName) && sym.parameters[paramName] == value)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }          
+        return false;
+    }
+    
 
     private void SaveHistory()
     {
