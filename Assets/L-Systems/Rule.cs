@@ -21,7 +21,8 @@ public class Rule
         this.condition = condition;
         this.successor = successor;
     }
-
+    
+    [System.NonSerialized]
     public List<Rule> rules = new List<Rule>();
 
     public void LoadRulesFromFile()
@@ -64,7 +65,7 @@ public class Rule
         
         // Garantir que os parênteses ficam separados por espaços para o Split funcionar bem
         string formattedInput = input.Replace("[", " [ ").Replace("]", " ] ");
-        string[] tokens = formattedInput.Split(new[] { ' ' });
+        string[] tokens = formattedInput.Split(new[] { ' ' },System.StringSplitOptions.RemoveEmptyEntries);
 
         foreach (string token in tokens)
         {

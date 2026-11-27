@@ -9,7 +9,8 @@ public class Symbol
 
     // Dicionário com os parâmetros associados ao símbolo (ex: r = raio, x = material)
     
-    [SerializeField] public Dictionary<string, float> parameters; 
+    [System.NonSerialized]
+    public Dictionary<string, float> parameters; 
 
     // Construtor principal
     public Symbol(char character)
